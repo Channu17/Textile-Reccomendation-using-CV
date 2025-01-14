@@ -1,4 +1,5 @@
 cloth_env
-__pychache__
+__pycache__
 dataset
 model.keras
+*.db
