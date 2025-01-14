@@ -49,7 +49,7 @@ def get_features():
     json_data = []
     for row in rows:
         path = row['path']
-        features = pickle.loads(row['features'])  
+        features = pickle.loads(row['features']).reshape(-1)
         json_data.append({
             'path': path,
             'features': features
