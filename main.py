@@ -63,3 +63,4 @@ if uploaded_file:
     st.write("Most similar items:")
     for match in top_matches:
         st.write(f"Path: {match['path']}, Similarity: {match['similarity']:.4f}")
+        st.image(match['path'], caption=f"Similarity: {match['similarity']:.4f}", use_column_width=True)
