@@ -100,7 +100,7 @@ def reset_and_update_db():
 
 
 st.title("Image Similarity Finder")
-st.write("Upload an image to find the most similar items from the database.")
+st.write("Upload a cloth image to find the most similar cloths from the database.")
 
 if st.button("Reset & Update Database"):
     st.write("Resetting and updating the database. Please wait...")
