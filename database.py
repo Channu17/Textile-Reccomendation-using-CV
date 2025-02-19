@@ -14,7 +14,7 @@ def create_table():
         con.execute('''
         CREATE TABLE IF NOT EXISTS textiles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            path TEXT UNIQUE NOT NULL,
+            link TEXT UNIQUE NOT NULL,
             features BLOB NOT NULL
         )
         ''')
@@ -26,16 +26,16 @@ def create_table():
         con.close()
     
     
-def insert_features(path, features):
+def insert_features(link, features):
     con = get_db_connection()
     cursor = con.cursor()
     
     serialized_features = pickle.dumps(features)
     
     cursor.execute('''
-                   INSERT INTO textiles (path, features)
+                   INSERT INTO textiles (link, features)
                    VALUES (?, ?)''',
-                   (path, serialized_features))
+                   (link, serialized_features))
     con.commit()
     con.close()
 
@@ -48,10 +48,10 @@ def get_features():
     
     json_data = []
     for row in rows:
-        path = row['path']
+        link = row['link']
         features = pickle.loads(row['features']).reshape(-1)
         json_data.append({
-            'path': path,
+            'link': link,
             'features': features
         })
     return json_data
