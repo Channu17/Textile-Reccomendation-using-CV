@@ -5,5 +5,7 @@ pandas
 numpy
 opencv-python
 opencv-python-headless
-
 streamlit
+fastapi
+uvicorn
+python-multipart
