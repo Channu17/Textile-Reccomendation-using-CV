@@ -9,4 +9,4 @@ streamlit
 fastapi
 uvicorn
 python-multipart
-PIL
+pillow
