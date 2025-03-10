@@ -1,13 +1,13 @@
 import os
 import requests
 import numpy as np
-import cv2
 import streamlit as st
 import tensorflow as tf
 import sqlite3
 from tensorflow.keras.models import load_model, Model
 from tensorflow.keras.preprocessing import image
 from io import BytesIO
+from PIL import Image  # Replacing OpenCV with PIL
 from sklearn.metrics.pairwise import cosine_similarity
 from database import get_features, insert_features, create_table  
 
@@ -30,9 +30,10 @@ def extract_features_from_url(image_url):
     try:
         response = requests.get(image_url)
         if response.status_code == 200:
-            img = image.load_img(BytesIO(response.content), target_size=(224, 224))
-            img_array = image.img_to_array(img)
-            img_array = preprocess_image(img_array)
+            img = Image.open(BytesIO(response.content)).convert("RGB")
+            img = img.resize((224, 224))
+            img_array = np.array(img) / 255.0
+            img_array = np.expand_dims(img_array, axis=0)
             features = feature_extractor.predict(img_array).flatten()
             return features
         else:
@@ -58,7 +59,6 @@ def find_similar(query_feature, top_n=5):
     results = [{"link": links[idx], "similarity": similarities[idx]} for idx in top_indices]
     
     return results
-
 
 def reset_and_update_db():
     """Delete existing database, create a new one, and fetch fresh product data."""
@@ -97,10 +97,8 @@ def reset_and_update_db():
 
         page += 1
 
-
-
-st.title("cloth recommendation system")
-st.write("Upload a cloth image to find the most similar cloths from the database.")
+st.title("Cloth Recommendation System")
+st.write("Upload a cloth image to find the most similar clothes from the database.")
 
 if st.button("Reset & Update Database"):
     st.write("Resetting and updating the database. Please wait...")
@@ -113,16 +111,12 @@ if uploaded_file:
     st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
     st.write("Processing the image...")
 
+    # Using PIL to open the uploaded image
+    img = Image.open(uploaded_file).convert("RGB")
 
-    file_bytes = uploaded_file.read()
-    np_image = np.frombuffer(file_bytes, np.uint8)
-    img = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-
+    # Preprocess the image for the model
     preprocessed_image = preprocess_image(img)
     features = feature_extractor.predict(preprocessed_image).flatten()
-
 
     st.write("Finding similar items...")
     top_matches = find_similar(features, top_n=5)
@@ -133,3 +127,4 @@ if uploaded_file:
             st.image(match['link'], caption=f"Similarity: {match['similarity']:.4f}", use_column_width=True)
     else:
         st.write("No similar images found.")
+
