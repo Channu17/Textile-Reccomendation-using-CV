@@ -100,10 +100,6 @@ def reset_and_update_db():
 st.title("Cloth Recommendation System")
 st.write("Upload a cloth image to find the most similar clothes from the database.")
 
-if st.button("Reset & Update Database"):
-    st.write("Resetting and updating the database. Please wait...")
-    reset_and_update_db()
-    st.success("Database reset and updated successfully!")
 
 uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
 
